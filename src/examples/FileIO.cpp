@@ -3,6 +3,7 @@
 #include <ostream>
 
 #include <vkt/ExecutionPolicy.hpp>
+#include <vkt/Histogram.hpp>
 #include <vkt/InputStream.hpp>
 #include <vkt/LookupTable.hpp>
 #include <vkt/Render.hpp>
@@ -58,12 +59,17 @@ int main(int argc, char** argv)
     // Switch execution to GPU (remove those lines for CPU rendering)
     vkt::ExecutionPolicy ep = vkt::GetThreadExecutionPolicy();
     ep.device = vkt::ExecutionPolicy::Device::GPU;
+    ep.printPerformance = vkt::True;
     vkt::SetThreadExecutionPolicy(ep);
+
+    vkt::Histogram histogram(256);
+    ComputeHistogram(volume, histogram);
 
     vkt::RenderState renderState;
     //renderState.renderAlgo = vkt::RenderAlgo::RayMarching;
     //renderState.renderAlgo = vkt::RenderAlgo::ImplicitIso;
     renderState.renderAlgo = vkt::RenderAlgo::MultiScattering;
     renderState.rgbaLookupTable = lut.getResourceHandle();
+    renderState.histogram = histogram.getResourceHandle();
     vkt::Render(volume, renderState);
 }

@@ -34,6 +34,11 @@ namespace vkt
             float val = volume.getValue(x, y, z);
 
             std::size_t binID = (std::size_t)((val - lo) * (numBins / (hi - lo)));
+            if (x==114 && y==428 && z==3) {
+                std::size_t index = z * last.x * last.y + y * last.x + x;
+                uint16_t ival = *((uint16_t*)(volume.getData() + index));
+                printf("%f %u %i\n",val,(unsigned)ival,(int)index);
+            }
 
             atomicAdd((unsigned long long*)&bins[binID], 1ULL);
         }
